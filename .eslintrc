@@ -1,0 +1,9 @@
+{
+    "extends": "rallycoding",
+    "rules": {
+        "arrow-body-style": 0,
+        "no-undef":0,
+        "max-len": 0
+    },
+    "parser": "babel-eslint"
+}
