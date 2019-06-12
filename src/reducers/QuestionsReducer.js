@@ -5,7 +5,8 @@ import {
 
 const INITIAL_STATE = {
     questions: [],
-    currentQuestion: 0
+    currentQuestion: 0,
+    selectedAnswer: 0
 };
 
 export default (state = INITIAL_STATE, action) => {

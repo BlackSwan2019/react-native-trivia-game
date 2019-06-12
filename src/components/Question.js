@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Button, Card } from './common';
@@ -40,15 +40,24 @@ class Question extends Component {
     }
 
     render() {
+        const { container, questionStyle, buttonStyle, textStyle } = styles;
+
         return (
-            <View style={styles.container}>
-                <Card style={styles.questionStyle}>
+            <View style={container}>
+                <Card style={questionStyle}>
                     <Text>{this.props.question}</Text>
                 </Card>
 
                 {this.renderAnswers()}
 
-                <Button onPress={this.nextQuestion.bind(this)} style={styles.nextStyle}>Next Question</Button>
+                <TouchableOpacity 
+                    style={buttonStyle}
+                    onPress={this.nextQuestion.bind(this)} 
+                >
+                    <Text style={textStyle}>
+                        Next Question
+                    </Text>
+        </TouchableOpacity>
             </View>
         );
     }
@@ -63,10 +72,20 @@ const styles = {
     questionStyle: {
         marginBottom: 30
     },
-    nextStyle: {
-        marginTop: 30, 
-        backgroundColor: '#F90', 
+    textStyle: {
         color: '#FFF'
+    },
+    buttonStyle: {
+        width: 200,
+        alignSelf: 'center',
+        backgroundColor: '#999', 
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '4d4d4d',
+        marginTop: 30, 
+        margin: 5,
+        padding: 10,
+        alignItems: 'center'
     }
 };
 

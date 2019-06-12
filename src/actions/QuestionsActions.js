@@ -9,6 +9,7 @@ export const fetchQuestions = ({ topicId }) => {
     return (dispatch) => {
             dispatch({ type: FETCHING_QUESTIONS });
 
+
             fetch(`https://opentdb.com/api.php?amount=10&category=${topicId}&difficulty=medium&type=multiple`)
             .then(response => response.json())
             .then(responseJson => {
