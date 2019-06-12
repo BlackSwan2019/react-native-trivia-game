@@ -17,7 +17,13 @@ export default (state = INITIAL_STATE, action) => {
         case NEXT_QUESTION:
             return { ...state, currentQuestion: state.currentQuestion + 1 };
         case SELECT_ANSWER:
-            console.log('Answer: ', action.payload);
+            if (action.payload === state.questions[state.currentQuestion].correct_answer) {
+                // Change color here? Set button color to hex green?
+                console.log('Correct!');
+            } else {
+                console.log('Incorrect!');
+            }
+
             return { ...state, selectedAnswer: action.payload };
         default:
             return state;
