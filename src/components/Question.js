@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Button, Card } from './common';
-import { nextQuestion } from '../actions';
+import { nextQuestion, selectAnswer } from '../actions';
 
 class Question extends Component {
     nextQuestion() {
@@ -12,6 +12,10 @@ class Question extends Component {
 
         // Go to new question page showing the new question.
         Actions.question();
+    }
+
+    handleAnswer(answer) {
+        this.props.selectAnswer({ answer });
     }
 
     shuffle(inArray) {
@@ -35,7 +39,12 @@ class Question extends Component {
         const shuffledAnswers = this.shuffle(answers);
 
         return shuffledAnswers.map(answer =>
-            <Button key={answer}>{answer}</Button>
+            <Button 
+                key={answer}
+                onPress={this.handleAnswer.bind(this, answer)}
+            >
+                {answer}
+            </Button>
         );
     }
 
@@ -99,4 +108,4 @@ const mapStateToProps = state => {
     return { question, correctAnswer, incorrectAnswers };
 };
 
-export default connect(mapStateToProps, { nextQuestion })(Question);
+export default connect(mapStateToProps, { nextQuestion, selectAnswer })(Question);

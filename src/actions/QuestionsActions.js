@@ -2,7 +2,8 @@ import { Actions } from 'react-native-router-flux';
 import {
     FETCHING_QUESTIONS,
     LOAD_QUESTIONS,
-    NEXT_QUESTION
+    NEXT_QUESTION,
+    SELECT_ANSWER
 } from './types';
 
 export const fetchQuestions = ({ topicId }) => {
@@ -24,5 +25,12 @@ export const fetchQuestions = ({ topicId }) => {
 export const nextQuestion = () => {
     return {
         type: NEXT_QUESTION
+    };
+};
+
+export const selectAnswer = ({ answer }) => {
+    return {
+        type: SELECT_ANSWER,
+        payload: answer
     };
 };
