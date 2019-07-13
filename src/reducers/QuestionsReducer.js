@@ -1,13 +1,16 @@
 import {
     LOAD_QUESTIONS,
     NEXT_QUESTION,
-    SELECT_ANSWER
+    SELECT_ANSWER,
+    CORRECT_ANSWER,
+    INCORRECT_ANSWER
 } from '../actions/types';
 
 const INITIAL_STATE = {
     questions: [],
     currentQuestion: 0,
-    selectedAnswer: ''
+    selectedAnswer: '',
+    correct: null
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -17,14 +20,11 @@ export default (state = INITIAL_STATE, action) => {
         case NEXT_QUESTION:
             return { ...state, currentQuestion: state.currentQuestion + 1 };
         case SELECT_ANSWER:
-            if (action.payload === state.questions[state.currentQuestion].correct_answer) {
-                // Change color here? Set button color to hex green?
-                console.log('Correct!');
-            } else {
-                console.log('Incorrect!');
-            }
-
             return { ...state, selectedAnswer: action.payload };
+        case CORRECT_ANSWER:
+            return { ...state, correct: 1 };
+        case INCORRECT_ANSWER:
+            return { ...state, correct: 0 };
         default:
             return state;
     }

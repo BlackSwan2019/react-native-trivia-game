@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 
 const Card = ({ onPress, children, style }) => {
     return (
@@ -7,9 +7,9 @@ const Card = ({ onPress, children, style }) => {
             onPress={onPress}
             style={[styles.containerStyle, style]} 
         >
-            <Text>
+            <View>
                 {children}
-            </Text>
+            </View>
         </TouchableOpacity>
     );
 };

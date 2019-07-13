@@ -1,12 +1,27 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+
 import { Button, Card } from './common';
 import { nextQuestion, selectAnswer } from '../actions';
+import { 
+    getQuestion, 
+    getCorrectAnswer, 
+    getIncorrectAnswers, 
+    getIsCorrect 
+} from '../selectors/QuestionSelector';
 
 class Question extends Component {
-    nextQuestion() {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            modalVisible: false
+        };
+    }
+
+    _nextQuestion() {
         // Increment to next question index.
         this.props.nextQuestion();
 
@@ -14,11 +29,15 @@ class Question extends Component {
         Actions.question();
     }
 
-    handleAnswer(answer) {
-        this.props.selectAnswer({ answer });
+    _handleAnswer(selectedAnswer) {
+        const correctAnswer = this.props.correctAnswer;
+
+        this.props.selectAnswer({ selectedAnswer, correctAnswer });
+
+        this.setState({ modalVisible: true });
     }
 
-    shuffle(inArray) {
+    _shuffle(inArray) {
         const outArray = inArray;
 
         for (let i = outArray.length - 1; i > 0; i--) {
@@ -28,7 +47,7 @@ class Question extends Component {
         return outArray;
     }
 
-    renderAnswers() {
+    _renderAnswers() {
         // Add incorrect answers to pool of answer options.
         let answers = this.props.incorrectAnswers;
 
@@ -36,20 +55,53 @@ class Question extends Component {
         answers = answers.concat(this.props.correctAnswer);
 
         // Shuffle the array of answer options.
-        const shuffledAnswers = this.shuffle(answers);
+        const shuffledAnswers = this._shuffle(answers);
 
         return shuffledAnswers.map(answer =>
             <Button 
                 key={answer}
-                onPress={this.handleAnswer.bind(this, answer)}
+                onPress={this._handleAnswer.bind(this, answer)}
             >
                 {answer}
             </Button>
         );
     }
 
+    _renderModal() {
+        const { modalContainerStyle, modalMessageStyle, correctAnswerStyle, incorrectAnswerStyle } = styles;
+
+        return (
+            <Modal
+                animationType="slide"
+                visible={this.state.modalVisible}
+                onRequestClose={() => { alert('Modal has been closed'); }}
+                transparent
+            >
+                <View style={modalContainerStyle}>
+                    <View style={modalMessageStyle}>
+                        <View >
+                            {this.props.correct ? 
+                                <Text style={correctAnswerStyle}>Correct!</Text> : 
+                                <Text style={incorrectAnswerStyle}>Incorrect!</Text>}
+                        </View>
+                        <Button 
+                            onPress={() => { 
+                                this.props.nextQuestion();
+                                //this._nextQuestion.bind(this);
+
+                                this.setState({ modalVisible: false });
+                            }}
+                        >
+                            Next Question
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
+        );
+    }
+
     render() {
-        const { container, questionStyle, buttonStyle, textStyle } = styles;
+        const { container, questionStyle } = styles;
 
         return (
             <View style={container}>
@@ -57,16 +109,8 @@ class Question extends Component {
                     <Text>{this.props.question}</Text>
                 </Card>
 
-                {this.renderAnswers()}
-
-                <TouchableOpacity 
-                    style={buttonStyle}
-                    onPress={this.nextQuestion.bind(this)} 
-                >
-                    <Text style={textStyle}>
-                        Next Question
-                    </Text>
-        </TouchableOpacity>
+                {this._renderAnswers()}
+                {this._renderModal()}
             </View>
         );
     }
@@ -95,17 +139,46 @@ const styles = {
         margin: 5,
         padding: 10,
         alignItems: 'center'
+    },
+    modalContainerStyle: {
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        position: 'relative',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalMessageStyle: {
+        padding: 20,
+        backgroundColor: 'white',
+        flexDirection: 'column',
+        justifyContent: 'center', 
+        alignItems: 'center',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#007AFF',
+    },
+    correctAnswerStyle: {
+        color: 'green',
+        fontSize: 30
+    },
+    incorrectAnswerStyle: {
+        color: 'red',
+        fontSize: 30
     }
 };
 
 const mapStateToProps = state => {
-    const questionIndex = state.questions.currentQuestion;
-
-    const question = state.questions.questions[questionIndex].question;
-    const correctAnswer = state.questions.questions[questionIndex].correct_answer;
-    const incorrectAnswers = state.questions.questions[questionIndex].incorrect_answers;
-
-    return { question, correctAnswer, incorrectAnswers };
+    return { 
+        question: getQuestion(state),
+        correctAnswer: getCorrectAnswer(state),
+        incorrectAnswers: getIncorrectAnswers(state),
+        correct: getIsCorrect(state) 
+    };
 };
 
-export default connect(mapStateToProps, { nextQuestion, selectAnswer })(Question);
+export default connect(
+    mapStateToProps, { 
+        nextQuestion, 
+        selectAnswer 
+    })(Question);
